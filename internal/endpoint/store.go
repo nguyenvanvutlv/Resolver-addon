@@ -424,11 +424,11 @@ func AddStoreEndpoints(mux *http.ServeMux) {
 	withCors := shared.Middleware(shared.EnableCORS)
 	withStore := StoreMiddleware(ProxyAuthContext, StoreContext, StoreRequired)
 
-	mux.HandleFunc("/v0/store/user", withStore(handleStoreUser))
-	mux.HandleFunc("/v0/store/magnets", withStore(handleStoreMagnets))
-	mux.HandleFunc("/v0/store/magnets/check", withStore(handleStoreMagnetsCheck))
-	mux.HandleFunc("/v0/store/magnets/{magnetId}", withStore(handleStoreMagnet))
-	mux.HandleFunc("/v0/store/link/generate", withStore(handleStoreLinkGenerate))
+	mux.HandleFunc("/resolver/user", withStore(handleStoreUser))
+	mux.HandleFunc("/resolver/magnets", withStore(handleStoreMagnets))
+	mux.HandleFunc("/resolver/magnets/check", withStore(handleStoreMagnetsCheck))
+	mux.HandleFunc("/resolver/magnets/{magnetId}", withStore(handleStoreMagnet))
+	mux.HandleFunc("/resolver/link/generate", withStore(handleStoreLinkGenerate))
 
-	mux.HandleFunc("/v0/store/_/static/{video}", withCors(handleStatic))
+	mux.HandleFunc("/resolver/_/static/{video}", withCors(handleStatic))
 }
