@@ -10,6 +10,7 @@ import (
 	"github.com/MunifTanjim/stremthru/internal/stremio/configure"
 	stremio_shared "github.com/MunifTanjim/stremthru/internal/stremio/shared"
 	stremio_template "github.com/MunifTanjim/stremthru/internal/stremio/template"
+	stremio_transformer "github.com/MunifTanjim/stremthru/internal/stremio/transformer"
 	stremio_userdata "github.com/MunifTanjim/stremthru/internal/stremio/userdata"
 )
 
@@ -52,6 +53,9 @@ type TemplateData struct {
 	CanAuthorize bool
 	IsAuthed     bool
 	AuthError    string
+
+	SortConfig   configure.Config
+	FilterConfig configure.Config
 }
 
 func (td *TemplateData) HasIndexerError() bool {
@@ -149,6 +153,20 @@ func getTemplateData(ud *UserData, w http.ResponseWriter, r *http.Request) *Temp
 			},
 		},
 		Script: configure.GetScriptStoreTokenDescription("", ""),
+		SortConfig: configure.Config{
+			Key:         "sort",
+			Type:        "text",
+			Default:     ud.Sort,
+			Title:       "Stream Sort",
+			Description: "Comma separated fields: <code>resolution</code>, <code>quality</code>, <code>size</code>, <code>hdr</code>. Prefix with <code>-</code> for reverse sort. Default: <code>" + stremio_transformer.StreamDefaultSortConfig + "</code>",
+		},
+		FilterConfig: configure.Config{
+			Key:         "filter",
+			Type:        "textarea",
+			Default:     ud.Filter,
+			Title:       "🧪 Stream Filter",
+			Description: `Filter expression using <a href="https://expr-lang.org/docs/language-definition" target="_blank">expr-lang</a> syntax.`,
+		},
 	}
 
 	if cookie, err := stremio_shared.GetAdminCookieValue(w, r); err == nil && !cookie.IsExpired {

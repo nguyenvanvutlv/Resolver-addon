@@ -20,6 +20,7 @@ import (
 	"github.com/MunifTanjim/stremthru/internal/torrent_info"
 	"github.com/MunifTanjim/stremthru/internal/torrent_stream"
 	"github.com/MunifTanjim/stremthru/internal/worker"
+	"github.com/MunifTanjim/stremthru/internal/worker/worker_queue"
 	"github.com/MunifTanjim/stremthru/store"
 	"github.com/MunifTanjim/stremthru/stremio"
 )
@@ -62,6 +63,13 @@ func (ud UserData) fetchStream(ctx *context.StoreContext, r *http.Request, rType
 			go buddy.PullTorrentsByStremId(cleanSId, "")
 		} else {
 			buddy.PullTorrentsByStremId(cleanSId, "")
+		}
+
+		// Queue for background torznab indexer sync
+		if !nsid.IsAnime {
+			worker_queue.TorznabIndexerSyncerQueue.Queue(worker_queue.TorznabIndexerSyncerQueueItem{
+				SId: nsid.String(),
+			})
 		}
 	} else if !errors.Is(err, torrent_stream.ErrUnsupportedStremId) {
 		log.Error("failed to normalize strem id", "strem_id", stremId, "error", err)
@@ -189,6 +197,15 @@ func (ud UserData) fetchStream(ctx *context.StoreContext, r *http.Request, rType
 
 	if ud.IncludeTorz {
 		allStreams = dedupeStreams(allStreams)
+	}
+
+	if ud.Filter != "" {
+		filter, err := stremio_transformer.StreamFilterBlob(ud.Filter).Parse()
+		if err == nil {
+			allStreams = filterStreams(allStreams, filter)
+		} else {
+			log.Warn("failed to parse filter expression", "error", err)
+		}
 	}
 
 	if template != nil {
@@ -321,4 +338,15 @@ func (ud UserData) fetchStream(ctx *context.StoreContext, r *http.Request, rType
 	return &stremio.StreamHandlerResponse{
 		Streams: streams,
 	}, nil
+}
+
+func filterStreams(streams []WrappedStream, filter *stremio_transformer.StreamFilter) []WrappedStream {
+	result := make([]WrappedStream, 0, len(streams))
+	for i := range streams {
+		stream := &streams[i]
+		if stream.r == nil || filter.Match(stream.r) {
+			result = append(result, *stream)
+		}
+	}
+	return result
 }
