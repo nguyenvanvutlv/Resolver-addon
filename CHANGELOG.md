@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.95.2](https://github.com/MunifTanjim/stremthru/compare/0.95.1...0.95.2) (2025-12-27)
+
+
+### Bug Fixes
+
+* **stremio/torz:** fix title list for anime ([b928121](https://github.com/MunifTanjim/stremthru/commit/b928121429310b27138b5ddb8017826f95be3cff))
+* **stremio/transformer:** expose .Raw for filter ([5c0eada](https://github.com/MunifTanjim/stremthru/commit/5c0eadab29592c78ecc9bb8328cc3295ba04868f))
+* **stremio/transformer:** improve fallback extractor ([83bb550](https://github.com/MunifTanjim/stremthru/commit/83bb55057114a4416e61bcf0b9f9be754138ef8e))
+* **sync/stremio-trakt:** do not ignore removed items ([9f6d36e](https://github.com/MunifTanjim/stremthru/commit/9f6d36eba51ca750cb0816cd0047df970de8a771))
+* **torznab/indexer:** grab private torrent files in worker ([f77d481](https://github.com/MunifTanjim/stremthru/commit/f77d4812e641be02bc9405f6d260a3a0690e175d))
+* **torznab/indexer:** support anime in worker ([3858a1f](https://github.com/MunifTanjim/stremthru/commit/3858a1f13bcc6e8425b26fea9fa7fc54489d5e11))
+
+## [0.95.1](https://github.com/MunifTanjim/stremthru/compare/0.95.0...0.95.1) (2025-12-27)
+
+
+### Bug Fixes
+
+* **stremio/disabled:** correctly handle manifest url with query params ([a3e69f6](https://github.com/MunifTanjim/stremthru/commit/a3e69f6b263f418f90cff9cb9129220d528fd554))
+* **stremio/transformer:** fix comparison for file.size ([4835c6b](https://github.com/MunifTanjim/stremthru/commit/4835c6bec0e7752f5f7c5c5c1659271d49c440bf))
+* **stremio/transformer:** fix comparison for resolution/quality/size ([08fe39b](https://github.com/MunifTanjim/stremthru/commit/08fe39b3aeead3bb6fbe3b32aba7ac682bebae2d))
+
 ## [0.95.0](https://github.com/MunifTanjim/stremthru/compare/0.94.9...0.95.0) (2025-12-24)
 
 
