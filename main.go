@@ -9,6 +9,7 @@ import (
 	"github.com/MunifTanjim/stremthru/internal/endpoint"
 	"github.com/MunifTanjim/stremthru/internal/posthog"
 	"github.com/MunifTanjim/stremthru/internal/shared"
+	"github.com/MunifTanjim/stremthru/internal/worker"
 	"github.com/MunifTanjim/stremthru/store"
 )
 
@@ -33,10 +34,17 @@ func main() {
 	defer db.Close()
 	db.Ping()
 	RunSchemaMigration(database.URI, database)
+	stopWorkers := worker.InitWorkers()
+	defer stopWorkers()
 
 	mux := http.NewServeMux()
+	endpoint.AddRootEndpoint(mux)
+	endpoint.AddDashEndpoint(mux)
+	endpoint.AddAuthEndpoints(mux)
 	endpoint.AddHealthEndpoints(mux)
+	endpoint.AddMetaEndpoints(mux)
 	endpoint.AddStoreEndpoints(mux)
+	endpoint.AddStremioEndpoints(mux)
 
 	handler := shared.RootServerContext(mux)
 

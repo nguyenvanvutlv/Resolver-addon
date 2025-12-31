@@ -348,52 +348,56 @@ func NewWorker(conf *WorkerConfig) *Worker {
 func InitWorkers() func() {
 	workers := []*Worker{}
 
-	if worker := InitParseTorrentWorker(&WorkerConfig{
-		Disabled:     !config.Feature.HasTorrentInfo(),
-		Name:         "parse-torrent",
-		Interval:     5 * time.Minute,
-		RunExclusive: true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+	if false {
+		if worker := InitParseTorrentWorker(&WorkerConfig{
+			Disabled:     !config.Feature.HasTorrentInfo(),
+			Name:         "parse-torrent",
+			Interval:     5 * time.Minute,
+			RunExclusive: true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_animetosho {
-				return true, "sync_animetosho is running"
-			}
-			if running_worker.sync_bitmagnet {
-				return true, "sync_bitmagnet is running"
-			}
-			if running_worker.sync_dmm_hashlist {
-				return true, "sync_dmm_hashlist is running"
-			}
-			if running_worker.sync_imdb {
-				return true, "sync_imdb is running"
-			}
-			if running_worker.map_anidb_torrent {
-				return true, "map_anidb_torrent is running"
-			}
-			if running_worker.map_imdb_torrent {
-				return true, "map_imdb_torrent is running"
-			}
-			return false, ""
-		},
-		OnStart: func() {},
-		OnEnd:   func() {},
-	}); worker != nil {
-		workers = append(workers, worker)
+				if running_worker.sync_animetosho {
+					return true, "sync_animetosho is running"
+				}
+				if running_worker.sync_bitmagnet {
+					return true, "sync_bitmagnet is running"
+				}
+				if running_worker.sync_dmm_hashlist {
+					return true, "sync_dmm_hashlist is running"
+				}
+				if running_worker.sync_imdb {
+					return true, "sync_imdb is running"
+				}
+				if running_worker.map_anidb_torrent {
+					return true, "map_anidb_torrent is running"
+				}
+				if running_worker.map_imdb_torrent {
+					return true, "map_imdb_torrent is running"
+				}
+				return false, ""
+			},
+			OnStart: func() {},
+			OnEnd:   func() {},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
-	if worker := InitPushTorrentsWorker(&WorkerConfig{
-		Disabled: TorrentPusherQueue.disabled,
-		Name:     "push-torrent",
-		Interval: 10 * time.Minute,
-		ShouldWait: func() (bool, string) {
-			return false, ""
-		},
-		OnStart: func() {},
-		OnEnd:   func() {},
-	}); worker != nil {
-		workers = append(workers, worker)
+	if false {
+		if worker := InitPushTorrentsWorker(&WorkerConfig{
+			Disabled: TorrentPusherQueue.disabled,
+			Name:     "push-torrent",
+			Interval: 10 * time.Minute,
+			ShouldWait: func() (bool, string) {
+				return false, ""
+			},
+			OnStart: func() {},
+			OnEnd:   func() {},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
 	if worker := InitCrawlStoreWorker(&WorkerConfig{
@@ -448,91 +452,97 @@ func InitWorkers() func() {
 		workers = append(workers, worker)
 	}
 
-	if worker := InitSyncDMMHashlistWorker(&WorkerConfig{
-		Disabled:          !config.Feature.HasDMMHashlist(),
-		Name:              "sync-dmm-hashlist",
-		Interval:          6 * time.Hour,
-		RunAtStartupAfter: 30 * time.Second,
-		RunExclusive:      true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+	if false {
+		if worker := InitSyncDMMHashlistWorker(&WorkerConfig{
+			Disabled:          !config.Feature.HasDMMHashlist(),
+			Name:              "sync-dmm-hashlist",
+			Interval:          6 * time.Hour,
+			RunAtStartupAfter: 30 * time.Second,
+			RunExclusive:      true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_imdb {
-				return true, "sync_imdb is running"
-			}
-			return false, ""
-		},
-		OnStart: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				if running_worker.sync_imdb {
+					return true, "sync_imdb is running"
+				}
+				return false, ""
+			},
+			OnStart: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.sync_dmm_hashlist = true
-		},
-		OnEnd: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				running_worker.sync_dmm_hashlist = true
+			},
+			OnEnd: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.sync_dmm_hashlist = false
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+				running_worker.sync_dmm_hashlist = false
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
-	if worker := InitMapIMDBTorrentWorker(&WorkerConfig{
-		Disabled:          !config.Feature.HasIMDBTitle(),
-		Name:              "map-imdb-torrent",
-		Interval:          30 * time.Minute,
-		RunAtStartupAfter: 30 * time.Second,
-		RunExclusive:      true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+	if false {
+		if worker := InitMapIMDBTorrentWorker(&WorkerConfig{
+			Disabled:          !config.Feature.HasIMDBTitle(),
+			Name:              "map-imdb-torrent",
+			Interval:          30 * time.Minute,
+			RunAtStartupAfter: 30 * time.Second,
+			RunExclusive:      true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_imdb {
-				return true, "sync_imdb is running"
-			}
-			if running_worker.sync_animetosho {
-				return true, "sync_animetosho is running"
-			}
-			if running_worker.sync_bitmagnet {
-				return true, "sync_bitmagnet is running"
-			}
-			if running_worker.sync_dmm_hashlist {
-				return true, "sync_dmm_hashlist is running"
-			}
-			return false, ""
-		},
-		OnStart: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				if running_worker.sync_imdb {
+					return true, "sync_imdb is running"
+				}
+				if running_worker.sync_animetosho {
+					return true, "sync_animetosho is running"
+				}
+				if running_worker.sync_bitmagnet {
+					return true, "sync_bitmagnet is running"
+				}
+				if running_worker.sync_dmm_hashlist {
+					return true, "sync_dmm_hashlist is running"
+				}
+				return false, ""
+			},
+			OnStart: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.map_imdb_torrent = true
-		},
-		OnEnd: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				running_worker.map_imdb_torrent = true
+			},
+			OnEnd: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.map_imdb_torrent = false
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+				running_worker.map_imdb_torrent = false
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
-	if worker := InitMagnetCachePullerWorker(&WorkerConfig{
-		Disabled: worker_queue.MagnetCachePullerQueue.Disabled,
-		Name:     "pull-magnet-cache",
-		Interval: 5 * time.Minute,
-		ShouldSkip: func() bool {
-			return worker_queue.MagnetCachePullerQueue.IsEmpty()
-		},
-		ShouldWait: func() (bool, string) {
-			return false, ""
-		},
-		OnStart: func() {},
-		OnEnd:   func() {},
-	}); worker != nil {
-		workers = append(workers, worker)
+	if false {
+		if worker := InitMagnetCachePullerWorker(&WorkerConfig{
+			Disabled: worker_queue.MagnetCachePullerQueue.Disabled,
+			Name:     "pull-magnet-cache",
+			Interval: 5 * time.Minute,
+			ShouldSkip: func() bool {
+				return worker_queue.MagnetCachePullerQueue.IsEmpty()
+			},
+			ShouldWait: func() (bool, string) {
+				return false, ""
+			},
+			OnStart: func() {},
+			OnEnd:   func() {},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
 	if worker := InitMapAnimeIdWorker(&WorkerConfig{
@@ -677,55 +687,57 @@ func InitWorkers() func() {
 		workers = append(workers, worker)
 	}
 
-	if worker := InitMapAniDBTorrentWorker(&WorkerConfig{
-		Disabled:          !config.Feature.IsEnabled("anime"),
-		Name:              "map-anidb-torrent",
-		Interval:          30 * time.Minute,
-		RunAtStartupAfter: 90 * time.Second,
-		RunExclusive:      true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+	if false {
+		if worker := InitMapAniDBTorrentWorker(&WorkerConfig{
+			Disabled:          !config.Feature.IsEnabled("anime"),
+			Name:              "map-anidb-torrent",
+			Interval:          30 * time.Minute,
+			RunAtStartupAfter: 90 * time.Second,
+			RunExclusive:      true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_animetosho {
-				return true, "sync_animetosho is running"
-			}
-			if running_worker.sync_bitmagnet {
-				return true, "sync_bitmagnet is running"
-			}
-			if running_worker.sync_dmm_hashlist {
-				return true, "sync_dmm_hashlist is running"
-			}
+				if running_worker.sync_animetosho {
+					return true, "sync_animetosho is running"
+				}
+				if running_worker.sync_bitmagnet {
+					return true, "sync_bitmagnet is running"
+				}
+				if running_worker.sync_dmm_hashlist {
+					return true, "sync_dmm_hashlist is running"
+				}
 
-			if running_worker.sync_anidb_titles {
-				return true, "sync_anidb_titles is running"
-			}
-			if running_worker.sync_anidb_tvdb_episode_map {
-				return true, "sync_anidb_tvdb_episode_map is running"
-			}
-			if running_worker.sync_animeapi {
-				return true, "sync_animeapi is running"
-			}
-			if running_worker.sync_manami_anime_database {
-				return true, "sync_manami_anime_database is running"
-			}
+				if running_worker.sync_anidb_titles {
+					return true, "sync_anidb_titles is running"
+				}
+				if running_worker.sync_anidb_tvdb_episode_map {
+					return true, "sync_anidb_tvdb_episode_map is running"
+				}
+				if running_worker.sync_animeapi {
+					return true, "sync_animeapi is running"
+				}
+				if running_worker.sync_manami_anime_database {
+					return true, "sync_manami_anime_database is running"
+				}
 
-			return false, ""
-		},
-		OnStart: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				return false, ""
+			},
+			OnStart: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.map_anidb_torrent = true
-		},
-		OnEnd: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				running_worker.map_anidb_torrent = true
+			},
+			OnEnd: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.map_anidb_torrent = false
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+				running_worker.map_anidb_torrent = false
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
 	if worker := InitSyncLetterboxdList(&WorkerConfig{
@@ -745,77 +757,80 @@ func InitWorkers() func() {
 		workers = append(workers, worker)
 	}
 
-	if worker := InitSyncBitmagnetWorker(&WorkerConfig{
-		Disabled:          !config.Integration.Bitmagnet.IsEnabled(),
-		Name:              "sync-bitmagnet",
-		Interval:          60 * time.Minute,
-		RunAtStartupAfter: 90 * time.Second,
-		RunExclusive:      true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+	if false {
+		if worker := InitSyncBitmagnetWorker(&WorkerConfig{
+			Disabled:          !config.Integration.Bitmagnet.IsEnabled(),
+			Name:              "sync-bitmagnet",
+			Interval:          60 * time.Minute,
+			RunAtStartupAfter: 90 * time.Second,
+			RunExclusive:      true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_imdb {
-				return true, "sync_imdb is running"
-			}
+				if running_worker.sync_imdb {
+					return true, "sync_imdb is running"
+				}
 
-			if running_worker.sync_dmm_hashlist {
-				return true, "sync_dmm_hashlist is running"
-			}
+				if running_worker.sync_dmm_hashlist {
+					return true, "sync_dmm_hashlist is running"
+				}
 
-			return false, ""
-		},
-		OnStart: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				return false, ""
+			},
+			OnStart: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.sync_bitmagnet = true
-		},
-		OnEnd: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				running_worker.sync_bitmagnet = true
+			},
+			OnEnd: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.sync_bitmagnet = false
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+				running_worker.sync_bitmagnet = false
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
+	if false {
+		if worker := InitSyncAnimeToshoWorker(&WorkerConfig{
+			Disabled:          !config.Feature.IsEnabled("anime"),
+			Name:              "sync-animetosho",
+			Interval:          24 * time.Hour,
+			RunAtStartupAfter: 90 * time.Second,
+			RunExclusive:      true,
+			ShouldWait: func() (bool, string) {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-	if worker := InitSyncAnimeToshoWorker(&WorkerConfig{
-		Disabled:          !config.Feature.IsEnabled("anime"),
-		Name:              "sync-animetosho",
-		Interval:          24 * time.Hour,
-		RunAtStartupAfter: 90 * time.Second,
-		RunExclusive:      true,
-		ShouldWait: func() (bool, string) {
-			mutex.Lock()
-			defer mutex.Unlock()
+				if running_worker.sync_imdb {
+					return true, "sync_imdb is running"
+				}
+				if running_worker.sync_bitmagnet {
+					return true, "sync_bitmagnet is running"
+				}
+				if running_worker.sync_dmm_hashlist {
+					return true, "sync_dmm_hashlist is running"
+				}
+				return false, ""
+			},
+			OnStart: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			if running_worker.sync_imdb {
-				return true, "sync_imdb is running"
-			}
-			if running_worker.sync_bitmagnet {
-				return true, "sync_bitmagnet is running"
-			}
-			if running_worker.sync_dmm_hashlist {
-				return true, "sync_dmm_hashlist is running"
-			}
-			return false, ""
-		},
-		OnStart: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
+				running_worker.sync_animetosho = true
+			},
+			OnEnd: func() {
+				mutex.Lock()
+				defer mutex.Unlock()
 
-			running_worker.sync_animetosho = true
-		},
-		OnEnd: func() {
-			mutex.Lock()
-			defer mutex.Unlock()
-
-			running_worker.sync_animetosho = false
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+				running_worker.sync_animetosho = false
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
 	if worker := InitLinkedUserdataAddonReloaderWorker(&WorkerConfig{
@@ -864,28 +879,32 @@ func InitWorkers() func() {
 		workers = append(workers, worker)
 	}
 
-	if worker := InitTorznabIndexerSyncerQueueWorker(&WorkerConfig{
-		Disabled:     worker_queue.TorznabIndexerSyncerQueue.Disabled,
-		Name:         "queue-torznab-indexer-sync",
-		Interval:     10 * time.Minute,
-		RunExclusive: true,
-		ShouldSkip: func() bool {
-			return worker_queue.TorznabIndexerSyncerQueue.IsEmpty() || !torznab_indexer.Exists()
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+	if false {
+		if worker := InitTorznabIndexerSyncerQueueWorker(&WorkerConfig{
+			Disabled:     worker_queue.TorznabIndexerSyncerQueue.Disabled,
+			Name:         "queue-torznab-indexer-sync",
+			Interval:     10 * time.Minute,
+			RunExclusive: true,
+			ShouldSkip: func() bool {
+				return worker_queue.TorznabIndexerSyncerQueue.IsEmpty() || !torznab_indexer.Exists()
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
-	if worker := InitTorznabIndexerSyncerWorker(&WorkerConfig{
-		Disabled:     !config.Feature.HasVault(),
-		Name:         "sync-torznab-indexer",
-		Interval:     30 * time.Minute,
-		RunExclusive: true,
-		ShouldSkip: func() bool {
-			return !torznab_indexer_syncinfo.HasSyncPending()
-		},
-	}); worker != nil {
-		workers = append(workers, worker)
+	if false {
+		if worker := InitTorznabIndexerSyncerWorker(&WorkerConfig{
+			Disabled:     !config.Feature.HasVault(),
+			Name:         "sync-torznab-indexer",
+			Interval:     30 * time.Minute,
+			RunExclusive: true,
+			ShouldSkip: func() bool {
+				return !torznab_indexer_syncinfo.HasSyncPending()
+			},
+		}); worker != nil {
+			workers = append(workers, worker)
+		}
 	}
 
 	return func() {

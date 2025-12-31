@@ -15,6 +15,7 @@ type TraktAccountResponse struct {
 	IsValid   bool   `json:"is_valid"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+	AccessToken string `json:"access_token"`
 }
 
 func toTraktAccountResponse(item *trakt_account.TraktAccount) TraktAccountResponse {
@@ -23,11 +24,12 @@ func toTraktAccountResponse(item *trakt_account.TraktAccount) TraktAccountRespon
 		username = otok.UserName
 	}
 	return TraktAccountResponse{
-		Id:        item.Id,
-		UserName:  username,
-		IsValid:   item.IsValid(),
-		CreatedAt: item.CAt.Format(time.RFC3339),
-		UpdatedAt: item.UAt.Format(time.RFC3339),
+		Id:          item.Id,
+		UserName:    username,
+		IsValid:     item.IsValid(),
+		CreatedAt:   item.CAt.Format(time.RFC3339),
+		UpdatedAt:   item.UAt.Format(time.RFC3339),
+		AccessToken: item.OAuthToken().AccessToken,
 	}
 }
 
