@@ -55,12 +55,12 @@ func ProxyAuthContext(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func getStoreName(r *http.Request) (store.StoreName, *core.StoreError) {
-	name := r.Header.Get("p")
+	name := r.Header.Get("X-StremThru-Store-Name")
 	if name == "" {
 		ctx := context.GetStoreContext(r)
 		if ctx.IsProxyAuthorized {
 			name = config.StoreAuthToken.GetPreferredStore(ctx.ProxyAuthUser)
-			r.Header.Set("p", name)
+			r.Header.Set("X-StremThru-Store-Name", name)
 		}
 	}
 	if name == "" {
@@ -70,7 +70,10 @@ func getStoreName(r *http.Request) (store.StoreName, *core.StoreError) {
 }
 
 func getStoreAuthToken(r *http.Request) string {
-	authHeader := r.Header.Get("t")
+	authHeader := r.Header.Get("X-StremThru-Store-Authorization")
+	if authHeader == "" {
+		authHeader = r.Header.Get("Authorization")
+	}
 	if authHeader == "" {
 		ctx := context.GetStoreContext(r)
 		if ctx.IsProxyAuthorized && ctx.Store != nil {
@@ -107,10 +110,7 @@ func StoreContext(next http.HandlerFunc) http.HandlerFunc {
 
 		ctx.ClientIP = shared.GetClientIP(r, ctx)
 
-		//w.Header().Add("X-StremThru-Store-Name", r.Header.Get("X-StremThru-Store-Name"))
-		if provider := r.Header.Get("provider"); provider != "" {
-			w.Header().Add("provider", provider)
-		}
+		w.Header().Add("X-StremThru-Store-Name", r.Header.Get("X-StremThru-Store-Name"))
 		next.ServeHTTP(w, r)
 	})
 }
