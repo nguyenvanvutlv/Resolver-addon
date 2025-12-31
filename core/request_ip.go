@@ -8,7 +8,6 @@ import (
 
 var ipRequestHeaders = []string{
 	"X-Client-Ip",         // Amazon EC2 / Heroku / others
-	"X-Forwarded-For",     // Load-balancers (AWS ELB) / proxies.
 	"Cf-Connecting-Ip",    // Cloudflare
 	"Do-Connecting-Ip",    // DigitalOcean
 	"Fastly-Client-Ip",    // Fastly / Firebase
@@ -16,6 +15,7 @@ var ipRequestHeaders = []string{
 	"X-Real-Ip",           // nginx
 	"X-Cluster-Client-Ip", // Rackspace LB / Riverbed's Stingray
 	"X-Forwarded",
+	"X-Forwarded-For", // Load-balancers (AWS ELB) / proxies.
 	"Forwarded-For",
 	"Forwarded",
 	"X-Appengine-User-Ip", // Google Cloud App Engine
@@ -67,4 +67,14 @@ func GetClientIP(r *http.Request) string {
 		return ip
 	}
 	return GetRequestIP(r)
+}
+
+func GetRequestIPHeaders(r *http.Request) map[string]string {
+	ipHeaders := make(map[string]string)
+	for _, header := range ipRequestHeaders {
+		if values := r.Header.Values(header); len(values) != 0 {
+			ipHeaders[header] = strings.Join(values, " ")
+		}
+	}
+	return ipHeaders
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/MunifTanjim/stremthru/core"
 	"github.com/MunifTanjim/stremthru/internal/config"
 	"github.com/MunifTanjim/stremthru/internal/context"
 	"github.com/MunifTanjim/stremthru/internal/server"
@@ -23,9 +24,11 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 type HealthDebugDataIP struct {
-	Machine string            `json:"machine"`
-	Tunnel  map[string]string `json:"tunnel"`
-	Exposed map[string]string `json:"exposed"`
+	Client         string            `json:"client"`
+	Exposed        map[string]string `json:"exposed"`
+	Machine        string            `json:"machine"`
+	Tunnel         map[string]string `json:"tunnel"`
+	RequestHeaders map[string]string `json:"request_headers"`
 }
 
 type HealthDebugDataStore struct {
@@ -114,9 +117,11 @@ func handleHealthDebug(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.IP = &HealthDebugDataIP{
-			Machine: machineIp,
-			Tunnel:  tunnel,
-			Exposed: exposed,
+			Client:         core.GetClientIP(r),
+			Exposed:        exposed,
+			Machine:        machineIp,
+			Tunnel:         tunnel,
+			RequestHeaders: core.GetRequestIPHeaders(r),
 		}
 	}
 
